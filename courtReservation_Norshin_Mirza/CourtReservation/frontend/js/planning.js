@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     function deleteReservation(reservationId) {
         // Stuur een DELETE-verzoek naar de backend om de reservering te verwijderen
-        fetch(`/reserveringen/${reservationId}`, {method: "DELETE"})
+        fetch(`http://localhost:3000/reserveringen/` + reservationId, {method: "DELETE"})
             .then((response) => {
                 if (response.ok) {
                     // Reservering is succesvol verwijderd, update de tabel
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formattedDate = currentDate.toISOString().split('T')[0];
 
         // Haal de reserveringen op voor de geselecteerde datum via een GET-verzoek naar de juiste endpoint
-        fetch(`/reserveringen/byDate?datum=${formattedDate}`)
+        fetch(`http://localhost:3000/reserveringen/byDate?datum=${formattedDate}`)
             .then(response => response.json())
             .then(data => {
                 displayReservations(data);

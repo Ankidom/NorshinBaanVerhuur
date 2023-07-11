@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         successMessage.style.display = 'none'; // Verberg eerdere succesmelding
 
         try {
-            const response = await fetch('/reserveren', {
+            const response = await fetch('http://localhost:3000/reserveren', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

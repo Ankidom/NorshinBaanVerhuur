@@ -7,10 +7,10 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 
 // Pad naar de SQLite-database
-const dbPad = 'database/db.sqlite';
+const dbPath = path.join(__dirname, 'db.sqlite');
 
 // Maak een nieuwe databaseverbinding
-const db = new sqlite3.Database(dbPad, (err) => {
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Fout bij het maken van de databaseverbinding:', err.message);
     } else {
@@ -52,65 +52,31 @@ const db = new sqlite3.Database(dbPad, (err) => {
             );
         `;
 
-        // Voer het SQL-statement uit om de tabel voor reserveringen aan te maken
-        db.run(createReservationsTable, (err) => {
-            if (err) {
-                console.error('Fout bij het aanmaken van de tabel voor reserveringen:', err.message);
-            } else {
-                console.log('Tabel voor reserveringen aangemaakt.');
+        // Voer de SQL-statements uit om de tabellen aan te maken
+        db.serialize(() => {
+            db.run(createReservationsTable, (err) => {
+                if (err) {
+                    console.error('Fout bij het aanmaken van de tabel voor reserveringen:', err.message);
+                } else {
+                    console.log('Tabel voor reserveringen aangemaakt.');
+                }
+            });
 
-                // Voer het SQL-statement uit om de tabel voor banen aan te maken
-                db.run(createCourtsTable, (err) => {
-                    if (err) {
-                        console.error('Fout bij het aanmaken van de tabel voor banen:', err.message);
-                    } else {
-                        console.log('Tabel voor banen aangemaakt.');
+            db.run(createCourtsTable, (err) => {
+                if (err) {
+                    console.error('Fout bij het aanmaken van de tabel voor banen:', err.message);
+                } else {
+                    console.log('Tabel voor banen aangemaakt.');
+                }
+            });
 
-                        // Voer het SQL-statement uit om de tabel voor locaties aan te maken
-                        db.run(createLocationsTable, (err) => {
-                            if (err) {
-                                console.error('Fout bij het aanmaken van de tabel voor locaties:', err.message);
-                            } else {
-                                console.log('Tabel voor locaties aangemaakt.');
-
-                                // Controleer en voeg de locatie toe aan de database
-                                const insertLocationData = `
-                                    INSERT INTO locations (naam, adres, stad, postcode)
-                                    SELECT 'Oldenzaal', 'Brederostraat 1', 'Oldenzaal', '7574XE'
-                                    WHERE NOT EXISTS (
-                                        SELECT 1 FROM locations WHERE naam = 'Oldenzaal'
-                                    );
-                                `;
-
-                                db.run(insertLocationData, (err) => {
-                                    if (err) {
-                                        console.error('Fout bij het toevoegen van de locatie:', err.message);
-                                    } else {
-                                        console.log('Locatie succesvol toegevoegd aan de database.');
-                                    }
-                                });
-
-                                // Controleer en voeg de baan toe aan de database
-                                const insertCourtData = `
-                                    INSERT INTO courts (naam, locatie, type)
-                                    SELECT 'Tennisbaan 1', 'Oldenzaal', 'kunstgras'
-                                    WHERE NOT EXISTS (
-                                        SELECT 1 FROM courts WHERE naam = 'Tennisbaan 1' AND locatie = 'Oldenzaal'
-                                    );
-                                `;
-
-                                db.run(insertCourtData, (err) => {
-                                    if (err) {
-                                        console.error('Fout bij het toevoegen van de baan:', err.message);
-                                    } else {
-                                        console.log('Baan succesvol toegevoegd aan de database.');
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
+            db.run(createLocationsTable, (err) => {
+                if (err) {
+                    console.error('Fout bij het aanmaken van de tabel voor locaties:', err.message);
+                } else {
+                    console.log('Tabel voor locaties aangemaakt.');
+                }
+            });
         });
     }
 });
@@ -127,34 +93,35 @@ app.use(cors());
 // Serveer de frontend-bestanden
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
+
 // Stuur index.html als standaardbestand
-app.get(['/', '/index.html'], (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'html', 'index.html'));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // Stuur reserveren.html
 app.get('/reserveren.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'html', 'reserveren.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'reserveren.html'));
 });
 
 // Stuur about.html
 app.get('/about.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'html', 'about.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'about.html'));
 });
 
 // Stuur navbar.html
 app.get('/navbar.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'html', 'navbar.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'navbar.html'));
 });
 
 // Stuur planning.html
 app.get('/planning.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'html', 'planning.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'planning.html'));
 });
 
-// Stuur planning.html
-app.get('/wijzigreservering.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'html', 'wijzigreservering.html'));
+// Stuur wijzigReservering.html
+app.get('/wijzigReservering.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'wijzigReservering.html'));
 });
 
 // Endpoint voor het verwerken van het reserveringsformulier
@@ -184,7 +151,7 @@ const reservationsRouter = require('./routes/reservations');
 app.use('/reserveringen', reservationsRouter);
 
 // Start de server op de opgegeven poort
-const poort = 3000;
-app.listen(poort, () => {
-    console.log(`Server is gestart op poort ${poort}`);
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Server is gestart op poort ${port}`);
 });

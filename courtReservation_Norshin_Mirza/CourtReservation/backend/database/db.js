@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 
 // Pad naar de SQLite-database
-const dbPath = 'test.sqlite';
+const dbPath = '../db.sqlite';
 
 // Maak een nieuwe databaseverbinding
 const db = new sqlite3.Database(dbPath, (err) => {

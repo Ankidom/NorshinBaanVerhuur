@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Functie om de reservering op te halen en in te vullen in het formulier
     function getReservation() {
         // Haal de reserveringsgegevens op via een GET-verzoek naar de backend met de reservering ID
-        fetch(`/reserveringen/${reservationId}`)
+        fetch(`http://localhost:3000/reserveringen/${reservationId}`)
             .then(response => response.json())
             .then(reservation => {
                 // Vul het reserveringsformulier met de huidige reserveringsgegevens
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         successMessage.style.display = 'none'; // Verberg eerdere succesmelding
 
         try {
-            const response = await fetch(`/reserveringen/${reservationId}`, {
+            const response = await fetch(`http://localhost:3000/reserveringen/${reservationId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
