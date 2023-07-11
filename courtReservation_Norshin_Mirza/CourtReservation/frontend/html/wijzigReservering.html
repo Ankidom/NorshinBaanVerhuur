@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script defer src="../js/navbar.js"></script>
+    <script src="../js/wijzigReservering.js"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reserveren.css">
+    <title>Wijzig Reservering</title>
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+<br>
+<br>
+<h1>Wijzig Reservering</h1>
+<form id="edit-form">
+
+    <!-- Naam van boeker -->
+    <label for="naam">Naam:</label>
+    <input type="text" id="naam" name="naam" required><br><br>
+
+    <!-- Keuze tussen tennis en padel -->
+    <label for="sport">Sport:</label>
+    <select id="sport" name="sport" required>
+        <option value="">Selecteer een sport</option>
+        <option value="tennis">Tennis</option>
+        <option value="padel">Padel</option>
+    </select><br>
+
+    <!-- Opties voor tennisbanen -->
+    <label for="tennisbaan" id="tennisbaanLabel" style="display: none;">Tennisbaan:</label>
+    <select id="tennisbaan" name="baan" disabled required style="display: none;">
+        <option value="">Selecteer een tennisbaan</option>
+        <option value="tennisbaan1">Tennisbaan 1</option>
+        <option value="tennisbaan2">Tennisbaan 2</option>
+        <option value="tennisbaan3">Tennisbaan 3</option>
+    </select>
+
+    <!-- Opties voor padelbanen -->
+    <label for="padelbaan" id="padelbaanLabel" style="display: none;">Padelbaan:</label>
+    <select id="padelbaan" name="baan" disabled required style="display: none;">
+        <option value="">Selecteer een padelbaan</option>
+        <option value="padelbaan1">Padelbaan 1</option>
+        <option value="padelbaan2">Padelbaan 2</option>
+        <option value="padelbaan3">Padelbaan 3</option>
+    </select><br>
+
+    <!-- Aantal ballen te selecteren -->
+    <label for="extra-ballen">Extra ballen:</label>
+    <input type="number" id="extra-ballen" name="extra_ballen" min="0" max="6" value="0"><br><br>
+    <!-- Aantal rackets te selecteren -->
+    <label for="extra-racket">Extra rackets:</label>
+    <input type="number" id="extra-racket" name="extra_racket" min="0" max="4" value="0"><br><br>
+    <!-- Datum kiezen -->
+    <label for="datum">Datum:</label>
+    <input type="date" id="datum" name="datum" required><br><br>
+    <!-- Tijd kiezen -->
+    <label for="tijd">Tijd:</label>
+    <p id="availability-message"></p>
+    <select id="tijd" name="tijd" required></select>
+    <!-- Wijziging bevestigen -->
+    <input type="submit" value="Opslaan" class="submit-button">
+</form>
+
+<!-- Foutmelding weergeven -->
+<p id="error-message"></p>
+
+<!-- Succesmelding weergeven -->
+<p id="success-message" class="success-message" style="display: none;">Reservering gewijzigd!</p>
+</body>
+</html>
