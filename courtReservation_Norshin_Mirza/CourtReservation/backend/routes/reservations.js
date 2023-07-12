@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { getReservations, createReservation, getReservationsByDate, deleteReservation } = require('../controllers/reservations');
 const reservationsController = require('../controllers/reservations');
+const db = require('../database/db');
+
 
 // GET-route voor het ophalen van alle reserveringen
 router.get('/', getReservations);

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const reservationsRouter = require('./routes/reservations');
 
 // Maak een express-applicatie
 const app = express();
@@ -16,41 +17,39 @@ const db = new sqlite3.Database(dbPath, (err) => {
     } else {
         console.log('Databaseverbinding tot stand gebracht.');
 
-        // SQL-statement voor het aanmaken van de tabel voor reserveringen
+        // SQL-statements voor het aanmaken van de tabellen
         const createReservationsTable = `
-            CREATE TABLE IF NOT EXISTS reservations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                naam TEXT NOT NULL,npm
-                sport TEXT NOT NULL,
-                baan TEXT NOT NULL,
-                extra_ballen INTEGER DEFAULT 0,
-                extra_racket INTEGER DEFAULT 0,
-                datum DATE NOT NULL,
-                tijd TEXT NOT NULL
-            );
-        `;
+      CREATE TABLE IF NOT EXISTS reservations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        naam TEXT NOT NULL,
+        sport TEXT NOT NULL,
+        baan TEXT NOT NULL,
+        extra_ballen INTEGER DEFAULT 0,
+        extra_racket INTEGER DEFAULT 0,
+        datum DATE NOT NULL,
+        tijd TEXT NOT NULL
+      );
+    `;
 
-        // SQL-statement voor het aanmaken van de tabel voor banen
         const createCourtsTable = `
-            CREATE TABLE IF NOT EXISTS courts (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                naam TEXT NOT NULL,
-                locatie TEXT NOT NULL,
-                type TEXT NOT NULL,
-                FOREIGN KEY (locatie) REFERENCES locations (naam) ON DELETE CASCADE
-            );
-        `;
+      CREATE TABLE IF NOT EXISTS courts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        naam TEXT NOT NULL,
+        locatie TEXT NOT NULL,
+        type TEXT NOT NULL,
+        FOREIGN KEY (locatie) REFERENCES locations (naam) ON DELETE CASCADE
+      );
+    `;
 
-        // SQL-statement voor het aanmaken van de tabel voor locaties
         const createLocationsTable = `
-            CREATE TABLE IF NOT EXISTS locations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                naam TEXT NOT NULL,
-                adres TEXT NOT NULL,
-                stad TEXT NOT NULL,
-                postcode TEXT NOT NULL
-            );
-        `;
+      CREATE TABLE IF NOT EXISTS locations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        naam TEXT NOT NULL,
+        adres TEXT NOT NULL,
+        stad TEXT NOT NULL,
+        postcode TEXT NOT NULL
+      );
+    `;
 
         // Voer de SQL-statements uit om de tabellen aan te maken
         db.serialize(() => {
@@ -92,7 +91,6 @@ app.use(cors());
 
 // Serveer de frontend-bestanden
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
-
 
 // Stuur index.html als standaardbestand
 app.get('/', (req, res) => {
@@ -143,9 +141,6 @@ app.post('/reserveren', (req, res) => {
         }
     );
 });
-
-// Importeer de reservations-router
-const reservationsRouter = require('./routes/reservations');
 
 // Gebruik de reservations-router voor het verwerken van reserveringen
 app.use('/reserveringen', reservationsRouter);

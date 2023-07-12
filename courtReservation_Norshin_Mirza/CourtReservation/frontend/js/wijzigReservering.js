@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Voeg hier eventuele acties toe na een succesvolle wijziging
 
                 // Stuur de gebruiker naar een andere pagina (bijvoorbeeld de reserveringslijst)
-                window.location.href = '/planning.html';
+                window.location.href = './planning.html';
             } else {
                 // Fout bij het wijzigen van de reservering
                 const errorMessage = await response.text();
