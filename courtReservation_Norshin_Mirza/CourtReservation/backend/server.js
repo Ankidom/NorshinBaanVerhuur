@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const reservationsRouter = require('./routes/reservations');
+const usersRouter = require('./routes/usersRouter');
 const db = require('./database/db');
 
 
@@ -12,6 +13,8 @@ const app = express();
 // Pad naar de SQLite-database
 const dbPath = path.join(__dirname, 'db.sqlite');
 
+// Gebruik de users-router voor het verwerken van gebruikers
+app.use('/users', usersRouter);
 
 // Middleware voor het verwerken van JSON-gegevens
 app.use(express.json());

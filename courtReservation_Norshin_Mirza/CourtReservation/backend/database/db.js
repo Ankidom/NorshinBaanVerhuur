@@ -13,37 +13,25 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
         // SQL-statements voor het aanmaken van de tabellen
         const createReservationsTable = `
-            CREATE TABLE IF NOT EXISTS reservations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                naam TEXT NOT NULL,
-                sport TEXT NOT NULL,
-                baan TEXT NOT NULL,
-                extra_ballen INTEGER DEFAULT 0,
-                extra_racket INTEGER DEFAULT 0,
-                datum DATE NOT NULL,
-                tijd TEXT NOT NULL
-            );
-        `;
+      CREATE TABLE IF NOT EXISTS reservations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        naam TEXT NOT NULL,
+        sport TEXT NOT NULL,
+        baan TEXT NOT NULL,
+        extra_ballen INTEGER DEFAULT 0,
+        extra_racket INTEGER DEFAULT 0,
+        datum DATE NOT NULL,
+        tijd TEXT NOT NULL
+      );
+    `;
 
-        const createCourtsTable = `
-            CREATE TABLE IF NOT EXISTS courts (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                naam TEXT NOT NULL,
-                locatie TEXT NOT NULL,
-                type TEXT NOT NULL,
-                FOREIGN KEY (locatie) REFERENCES locations (naam) ON DELETE CASCADE
-            );
-        `;
-
-        const createLocationsTable = `
-            CREATE TABLE IF NOT EXISTS locations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                naam TEXT NOT NULL,
-                adres TEXT NOT NULL,
-                stad TEXT NOT NULL,
-                postcode TEXT NOT NULL
-            );
-        `;
+        const createUsersTable = `
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE
+      );
+    `;
 
         // Voer de SQL-statements uit om de tabellen aan te maken
         db.serialize(() => {
@@ -55,19 +43,11 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 }
             });
 
-            db.run(createCourtsTable, (err) => {
+            db.run(createUsersTable, (err) => {
                 if (err) {
-                    console.error('Fout bij het aanmaken van de tabel voor banen:', err.message);
+                    console.error('Fout bij het aanmaken van de tabel voor gebruikers:', err.message);
                 } else {
-                    console.log('Tabel voor banen aangemaakt.');
-                }
-            });
-
-            db.run(createLocationsTable, (err) => {
-                if (err) {
-                    console.error('Fout bij het aanmaken van de tabel voor locaties:', err.message);
-                } else {
-                    console.log('Tabel voor locaties aangemaakt.');
+                    console.log('Tabel voor gebruikers aangemaakt.');
                 }
             });
         });
