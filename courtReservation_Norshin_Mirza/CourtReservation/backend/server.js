@@ -56,12 +56,12 @@ app.get('/wijzigReservering.html', (req, res) => {
 
 // Endpoint voor het verwerken van het reserveringsformulier
 app.post('/reserveren', (req, res) => {
-    const { naam, sport, baan, extra_ballen, extra_racket, datum, tijd } = req.body;
+    const { sport, baan, extra_ballen, extra_racket, datum, tijd, email } = req.body;
 
     // Voeg de reservering toe aan de database
     db.run(
-        `INSERT INTO reservations (naam, sport, baan, extra_ballen, extra_racket, datum, tijd) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [naam, sport, baan, extra_ballen, extra_racket, datum, tijd],
+        `INSERT INTO reservations (user_email, sport, baan, extra_ballen, extra_racket, datum, tijd) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [email, sport, baan, extra_ballen, extra_racket, datum, tijd],
         (err) => {
             if (err) {
                 console.error('Fout bij het toevoegen van de reservering:', err.message);
@@ -73,6 +73,8 @@ app.post('/reserveren', (req, res) => {
         }
     );
 });
+
+
 
 // Gebruik de reservations-router voor het verwerken van reserveringen
 app.use('/reserveringen', reservationsRouter);
