@@ -6,15 +6,11 @@ const reservationsRouter = require('./routes/reservations');
 const usersRouter = require('./routes/usersRouter');
 const db = require('./database/db');
 
-
 // Maak een express-applicatie
 const app = express();
 
 // Pad naar de SQLite-database
 const dbPath = path.join(__dirname, 'db.sqlite');
-
-// Gebruik de users-router voor het verwerken van gebruikers
-app.use('/users', usersRouter);
 
 // Middleware voor het verwerken van JSON-gegevens
 app.use(express.json());
@@ -80,6 +76,9 @@ app.post('/reserveren', (req, res) => {
 
 // Gebruik de reservations-router voor het verwerken van reserveringen
 app.use('/reserveringen', reservationsRouter);
+
+// Gebruik de users-router voor het verwerken van gebruikers
+app.use('/users', usersRouter);
 
 // Start de server op de opgegeven poort
 const port = 3000;
