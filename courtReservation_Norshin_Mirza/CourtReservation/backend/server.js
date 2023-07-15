@@ -4,6 +4,7 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const reservationsRouter = require('./routes/reservations');
 const usersRouter = require('./routes/usersRouter');
+const courtsRouter = require('./routes/courts');
 const db = require('./database/db');
 
 // Maak een express-applicatie
@@ -81,6 +82,8 @@ app.use('/reserveringen', reservationsRouter);
 
 // Gebruik de users-router voor het verwerken van gebruikers
 app.use('/users', usersRouter);
+
+app.use('/courts', courtsRouter);
 
 // Start de server op de opgegeven poort
 const port = 3000;

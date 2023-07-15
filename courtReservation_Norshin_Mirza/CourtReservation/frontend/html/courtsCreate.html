@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Voeg een nieuwe baan toe</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/courtsCreate.css">
+</head>
+<body>
+<nav>
+  <ul id="navbar-placeholder">
+    <li>
+      <a class="home" href="./index.html">Home</a>
+    </li>
+    <li>
+      <a class="reserveren" href="./reserveren.html">Reserveren</a>
+    </li>
+    <li>
+      <a class="planning" href="./planning.html">Planning</a>
+    </li>
+    <li>
+      <a class="about" href="./about.html">About</a>
+    </li>
+    <li>
+      <a class="register" href="./register.html">Register</a>
+    </li>
+    <li>
+      <a class="banen" href="courts.html">Banen</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="container">
+  <h2>Voeg een nieuwe baan toe</h2>
+  <form id="add-court-form">
+    <label for="type">Type:</label>
+    <input type="text" id="type" name="type" required>
+
+    <label for="location">Locatie:</label>
+    <input type="text" id="location" name="location" required>
+
+    <button type="submit">Voeg toe</button>
+  </form>
+</div>
+<script src="../js/courtsCreate.js" defer></script>
+</body>
+</html>
