@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function createReservationRow(reservation) {
         const row = document.createElement("tr");
 
-        const naamCell = document.createElement("td");
-        naamCell.textContent = reservation.naam;
-        row.appendChild(naamCell);
+        const emailCell = document.createElement("td");
+        emailCell.textContent = reservation.user_email;
+        row.appendChild(emailCell);
 
         const sportCell = document.createElement("td");
         sportCell.textContent = reservation.sport;

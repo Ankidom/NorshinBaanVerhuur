@@ -110,14 +110,14 @@ const getReservationById = (req, res) => {
 // Functie voor het bijwerken van een reservering
 const updateReservation = (req, res) => {
     const {id} = req.params;
-    const {naam, sport, baan, extra_ballen, extra_racket, datum, tijd} = req.body;
+    const {user_name, sport, baan, extra_ballen, extra_racket, datum, tijd} = req.body;
 
     const updateReservationQuery =
-        'UPDATE reservations SET naam = ?, sport = ?, baan = ?, extra_ballen = ?, extra_racket = ?, datum = ?, tijd = ? WHERE id = ?';
+        'UPDATE reservations SET user_email = ?, sport = ?, baan = ?, extra_ballen = ?, extra_racket = ?, datum = ?, tijd = ? WHERE id = ?';
 
     db.run(
         updateReservationQuery,
-        [naam, sport, baan, extra_ballen, extra_racket, datum, tijd, id],
+        [user_name, sport, baan, extra_ballen, extra_racket, datum, tijd, id],
         function (err) {
             if (err) {
                 console.error('Fout bij het bijwerken van de reservering:', err.message);

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script defer src="../js/navbar.js"></script>
     <script src="../js/wijzigReservering.js"></script>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/reserveren.css">
@@ -35,9 +34,10 @@
 <h1>Wijzig Reservering</h1>
 <form id="edit-form">
 
-    <!-- Naam van boeker -->
-    <label for="naam">Naam:</label>
-    <input type="text" id="naam" name="naam" required><br><br>
+    <!-- email van boeker -->
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" required disabled><br><br>
+    <input type="hidden" id="email-hidden" name="email">
 
     <!-- Keuze tussen tennis en padel -->
     <label for="sport">Sport:</label>

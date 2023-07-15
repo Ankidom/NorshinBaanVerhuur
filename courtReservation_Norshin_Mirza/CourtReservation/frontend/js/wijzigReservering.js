@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(reservation => {
                 // Vul het reserveringsformulier met de huidige reserveringsgegevens
-                document.getElementById('naam').value = reservation.naam;
+                document.getElementById('email').value = reservation.user_email;
+                document.getElementById('email-hidden').value = reservation.user_email;
                 document.getElementById('sport').value = reservation.sport;
                 if (reservation.sport === 'tennis') {
                     document.getElementById('tennisbaanLabel').style.display = 'block';
@@ -137,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    naam: document.getElementById('naam').value,
+                    email: document.getElementById('email-hidden').value,
                     sport: document.getElementById('sport').value,
                     baan: document.getElementById('sport').value === 'tennis' ? document.getElementById('tennisbaan').value : document.getElementById('padelbaan').value,
                     extra_ballen: parseInt(document.getElementById('extra-ballen').value),

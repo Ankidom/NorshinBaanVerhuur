@@ -24,14 +24,16 @@ const db = new sqlite3.Database(dbPath, (err) => {
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         user_email TEXT NOT NULL,
                         sport TEXT NOT NULL,
-                        baan TEXT NOT NULL,
+                        court_id INTEGER NOT NULL,
                         extra_ballen INTEGER DEFAULT 0,
                         extra_racket INTEGER DEFAULT 0,
                         datum DATE NOT NULL,
                         tijd TEXT NOT NULL,
-                        FOREIGN KEY (user_email) REFERENCES users(email)
+                        FOREIGN KEY (user_email) REFERENCES users(email),
+                        FOREIGN KEY (court_id) REFERENCES courts(id)
                     );
                 `;
+
 
                 const createUsersTable = `
                     CREATE TABLE IF NOT EXISTS users (
@@ -40,6 +42,25 @@ const db = new sqlite3.Database(dbPath, (err) => {
                         email TEXT NOT NULL UNIQUE
                     );
                 `;
+
+                // SQL-statements voor het aanmaken van de banen tabel
+                const createCourtsTable = `
+                    CREATE TABLE IF NOT EXISTS courts (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        court_type TEXT NOT NULL,
+                        location TEXT NOT NULL
+                    );
+                `;
+
+                // Voer het SQL-statement uit om de banen tabel aan te maken
+                db.run(createCourtsTable, (err) => {
+                    if (err) {
+                        console.error('Fout bij het aanmaken van de tabel voor banen:', err.message);
+                    } else {
+                        console.log('Tabel voor banen aangemaakt.');
+                    }
+                });
+
 
                 // Voer de SQL-statements uit om de tabellen aan te maken
                 db.serialize(() => {
