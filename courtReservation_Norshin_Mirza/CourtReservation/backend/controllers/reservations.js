@@ -34,50 +34,28 @@ const getReservationsByDate = (req, res) => {
 };
 
 const createReservation = (req, res) => {
-    const {user_email, court_id, date, time} = req.body;
+    const { sport, baan, extra_ballen, extra_racket, datum, tijd, email } = req.body;
 
-    // Controleer of het tijdslot beschikbaar is
-    const checkSlotAvailabilityQuery = 'SELECT * FROM available_slots WHERE court_id = ? AND date = ? AND time = ?';
-    const checkSlotAvailabilityParams = [court_id, date, time];
-
-    db.get(checkSlotAvailabilityQuery, checkSlotAvailabilityParams, (err, row) => {
+    // Controleer of de gebruiker bestaat in de database
+    db.get(`SELECT * FROM users WHERE email = ?`, email, (err, user) => {
         if (err) {
-            console.error('Fout bij het controleren van de beschikbaarheid van het tijdslot:', err);
-            res.status(500).json({error: 'Er is een interne serverfout opgetreden.'});
-        } else if (!row || !row.available) {
-            res.status(400).json({error: 'Het geselecteerde tijdslot is niet beschikbaar.'});
+            console.error('Fout bij het controleren van de gebruiker:', err.message);
+            res.status(500).json({ message: 'Er is een interne serverfout opgetreden.' });
+        } else if (!user) {
+            // Als er geen gebruiker met het gegeven email is, stuur een foutbericht
+            res.status(400).json({ message: 'Gebruiker niet gevonden.' });
         } else {
-            // Het tijdslot is beschikbaar, ga verder met het aanmaken van de reservering
-            const insertReservationQuery = 'INSERT INTO reservations (user_email, court_id, date, time) VALUES (?, ?, ?, ?)';
-
+            // Als de gebruiker bestaat, voeg de reservering toe aan de database
             db.run(
-                insertReservationQuery,
-                [user_email, court_id, date, time],
-                function (err) {
+                `INSERT INTO reservations (user_email, sport, baan, extra_ballen, extra_racket, datum, tijd) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [email, sport, baan, extra_ballen, extra_racket, datum, tijd],
+                (err) => {
                     if (err) {
-                        console.error('Fout bij het aanmaken van de reservering:', err.message);
-                        res.status(500).json({error: 'Er is een interne serverfout opgetreden.'});
+                        console.error('Fout bij het toevoegen van de reservering:', err.message);
+                        res.status(500).json({ message: 'Er is een interne serverfout opgetreden.' });
                     } else {
-                        const reservationId = this.lastID;
-
-                        // Markeer het tijdslot als niet beschikbaar
-                        const markSlotAsUnavailableQuery = 'UPDATE available_slots SET available = 0 WHERE court_id = ? AND date = ? AND time = ?';
-                        const markSlotAsUnavailableParams = [court_id, date, time];
-
-                        db.run(markSlotAsUnavailableQuery, markSlotAsUnavailableParams, function(err) {
-                            if (err) {
-                                console.error('Fout bij het markeren van het tijdslot als niet beschikbaar:', err.message);
-                                res.status(500).json({error: 'Er is een interne serverfout opgetreden.'});
-                            } else {
-                                res.status(201).json({
-                                    id: reservationId,
-                                    user_email,
-                                    court_id,
-                                    date,
-                                    time,
-                                });
-                            }
-                        });
+                        console.log('Reservering succesvol toegevoegd aan de database.');
+                        res.status(200).json({ message: 'Reservering succesvol verwerkt.' });
                     }
                 }
             );

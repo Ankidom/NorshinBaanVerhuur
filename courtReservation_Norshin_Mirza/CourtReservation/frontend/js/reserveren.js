@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
         failedMessage.style.display = 'none';
 
         try {
-            const response = await fetch('http://localhost:3000/reserveren', {
+            const response = await fetch('http://localhost:3000/reserveringen', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

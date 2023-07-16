@@ -26,40 +26,6 @@ app.use(cors());
 // Serveer de frontend-bestanden
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
-
-// Endpoint voor het verwerken van het reserveringsformulier
-app.post('/reserveren', (req, res) => {
-    const { sport, baan, extra_ballen, extra_racket, datum, tijd, email } = req.body;
-
-    // Controleer of de gebruiker bestaat in de database
-    db.get(`SELECT * FROM users WHERE email = ?`, email, (err, user) => {
-        if (err) {
-            console.error('Fout bij het controleren van de gebruiker:', err.message);
-            res.status(500).json({ message: 'Er is een interne serverfout opgetreden.' });
-        } else if (!user) {
-            // Als er geen gebruiker met het gegeven email is, stuur een foutbericht
-            res.status(400).json({ message: 'Gebruiker niet gevonden.' });
-        } else {
-            // Als de gebruiker bestaat, voeg de reservering toe aan de database
-            db.run(
-                `INSERT INTO reservations (user_email, sport, baan, extra_ballen, extra_racket, datum, tijd) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [email, sport, baan, extra_ballen, extra_racket, datum, tijd],
-                (err) => {
-                    if (err) {
-                        console.error('Fout bij het toevoegen van de reservering:', err.message);
-                        res.status(500).json({ message: 'Er is een interne serverfout opgetreden.' });
-                    } else {
-                        console.log('Reservering succesvol toegevoegd aan de database.');
-                        res.status(200).json({ message: 'Reservering succesvol verwerkt.' });
-                    }
-                }
-            );
-        }
-    });
-});
-
-
-
 app.use('/locations', locationsRouter);
 
 // Gebruik de reservations-router voor het verwerken van reserveringen
