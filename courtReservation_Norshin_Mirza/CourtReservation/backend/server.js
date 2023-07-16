@@ -26,35 +26,6 @@ app.use(cors());
 // Serveer de frontend-bestanden
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
-// Stuur index.html als standaardbestand
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
-});
-
-// Stuur reserveren.html
-app.get('/reserveren.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'reserveren.html'));
-});
-
-// Stuur about.html
-app.get('/about.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'about.html'));
-});
-
-// Stuur navbar.html
-app.get('/navbar.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'navbar.html'));
-});
-
-// Stuur planning.html
-app.get('/planning.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'planning.html'));
-});
-
-// Stuur wijzigReservering.html
-app.get('/wijzigReservering.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'wijzigReservering.html'));
-});
 
 // Endpoint voor het verwerken van het reserveringsformulier
 app.post('/reserveren', (req, res) => {
