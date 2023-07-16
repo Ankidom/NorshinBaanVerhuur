@@ -48,7 +48,7 @@ button[type="submit"]:hover {
     background-color: #45a049;
 }
 
-.success-message {
+#success-message {
     color: #008000;
     margin-top: 20px;
     text-align: center;
@@ -59,3 +59,8 @@ button[type="submit"]:hover {
     margin-top: 20px;
     text-align: center;
 }
+
+.alert {
+    margin: 0 auto;
+}
+

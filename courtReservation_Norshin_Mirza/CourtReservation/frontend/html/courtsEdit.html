@@ -2,10 +2,9 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Banen</title>
+  <title>Voeg een nieuwe baan toe</title>
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/courts.css">
-  <script defer src="../js/courts.js"></script>
+  <link rel="stylesheet" href="../css/courtsCreate.css">
 </head>
 <body>
 <nav>
@@ -32,21 +31,17 @@
 </nav>
 
 <div class="container">
-  <h1>Banen</h1>
-  <button id="add-court-btn">Nieuwe baan toevoegen</button>
-  <table id="courts-table">
-    <thead>
-    <tr>
-      <th>Type</th>
-      <th>Locatie</th>
-      <th>Verwijderen</th>
-      <th>Wijzigen</th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <h2>Wijzig een baan</h2>
+  <form id="edit-court-form">
+    <label for="type">Type:</label>
+    <input type="text" id="type" name="type" required>
 
+    <label for="location">Locatie:</label>
+    <input type="text" id="location" name="location" required>
 
+    <button type="submit">Wijzig</button>
+  </form>
 </div>
+<script src="../js/courtsEdit.js" defer></script>
 </body>
 </html>

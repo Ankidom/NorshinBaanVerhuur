@@ -1,6 +1,7 @@
 const db = require('../database/db');
 const userController = require('./usersController');
 
+
 // Functie voor het ophalen van alle reserveringen
 const getReservations = (req, res) => {
     const query = 'SELECT * FROM reservations';
@@ -33,38 +34,49 @@ const getReservationsByDate = (req, res) => {
 };
 
 const createReservation = (req, res) => {
-    const {user_email, sport, baan, extra_ballen, extra_racket, datum, tijd} = req.body;
+    const {user_email, court_id, date, time} = req.body;
 
-    // Controleer of de gebruiker bestaat op basis van de e-mail
-    userController.checkUserEmail(user_email, (err, userExists) => {
+    // Controleer of het tijdslot beschikbaar is
+    const checkSlotAvailabilityQuery = 'SELECT * FROM available_slots WHERE court_id = ? AND date = ? AND time = ?';
+    const checkSlotAvailabilityParams = [court_id, date, time];
+
+    db.get(checkSlotAvailabilityQuery, checkSlotAvailabilityParams, (err, row) => {
         if (err) {
-            console.error('Fout bij het controleren van de e-mail:', err);
-            res.status(500).json({message: 'Er is een interne serverfout opgetreden.'});
-        } else if (!userExists) {
-            res.status(400).json({message: 'Gebruiker met opgegeven e-mail bestaat niet.'});
+            console.error('Fout bij het controleren van de beschikbaarheid van het tijdslot:', err);
+            res.status(500).json({error: 'Er is een interne serverfout opgetreden.'});
+        } else if (!row || !row.available) {
+            res.status(400).json({error: 'Het geselecteerde tijdslot is niet beschikbaar.'});
         } else {
-            // Gebruiker bestaat, voeg de reservering toe aan de database
-            const insertReservationQuery =
-                'INSERT INTO reservations (user_email, sport, baan, extra_ballen, extra_racket, datum, tijd) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            // Het tijdslot is beschikbaar, ga verder met het aanmaken van de reservering
+            const insertReservationQuery = 'INSERT INTO reservations (user_email, court_id, date, time) VALUES (?, ?, ?, ?)';
 
             db.run(
                 insertReservationQuery,
-                [user_email, sport, baan, extra_ballen, extra_racket, datum, tijd],
+                [user_email, court_id, date, time],
                 function (err) {
                     if (err) {
-                        console.error('Fout bij het toevoegen van de reservering:', err.message);
+                        console.error('Fout bij het aanmaken van de reservering:', err.message);
                         res.status(500).json({error: 'Er is een interne serverfout opgetreden.'});
                     } else {
                         const reservationId = this.lastID;
-                        res.status(201).json({
-                            id: reservationId,
-                            user_email,
-                            sport,
-                            baan,
-                            extra_ballen,
-                            extra_racket,
-                            datum,
-                            tijd,
+
+                        // Markeer het tijdslot als niet beschikbaar
+                        const markSlotAsUnavailableQuery = 'UPDATE available_slots SET available = 0 WHERE court_id = ? AND date = ? AND time = ?';
+                        const markSlotAsUnavailableParams = [court_id, date, time];
+
+                        db.run(markSlotAsUnavailableQuery, markSlotAsUnavailableParams, function(err) {
+                            if (err) {
+                                console.error('Fout bij het markeren van het tijdslot als niet beschikbaar:', err.message);
+                                res.status(500).json({error: 'Er is een interne serverfout opgetreden.'});
+                            } else {
+                                res.status(201).json({
+                                    id: reservationId,
+                                    user_email,
+                                    court_id,
+                                    date,
+                                    time,
+                                });
+                            }
                         });
                     }
                 }
@@ -72,6 +84,7 @@ const createReservation = (req, res) => {
         }
     });
 };
+
 // Functie voor het verwijderen van een reservering
 const deleteReservation = (req, res) => {
     const {id} = req.params;
@@ -110,14 +123,16 @@ const getReservationById = (req, res) => {
 // Functie voor het bijwerken van een reservering
 const updateReservation = (req, res) => {
     const {id} = req.params;
-    const {user_name, sport, baan, extra_ballen, extra_racket, datum, tijd} = req.body;
+    const {user_email, extra_ballen, extra_racket, datum, tijd} = req.body;
+    console.log('Ontvangen gegevens:', {user_email, extra_ballen, extra_racket, datum, tijd});
+
 
     const updateReservationQuery =
-        'UPDATE reservations SET user_email = ?, sport = ?, baan = ?, extra_ballen = ?, extra_racket = ?, datum = ?, tijd = ? WHERE id = ?';
+        'UPDATE reservations SET user_email = ?, extra_ballen = ?, extra_racket = ?, datum = ?, tijd = ? WHERE id = ?';
 
     db.run(
         updateReservationQuery,
-        [user_name, sport, baan, extra_ballen, extra_racket, datum, tijd, id],
+        [user_email, extra_ballen, extra_racket, datum, tijd, id],
         function (err) {
             if (err) {
                 console.error('Fout bij het bijwerken van de reservering:', err.message);

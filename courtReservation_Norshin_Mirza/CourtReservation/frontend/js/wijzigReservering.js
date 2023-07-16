@@ -1,45 +1,69 @@
-let reservationId; // Declaratie van de variabele op een hoger niveau
-
-// Haal de reservering ID op uit de URL-parameter en vul het reserveringsformulier in
 document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("edit-form");
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+    const sportSelect = document.getElementById("sport");
+    const baanSelect = document.getElementById("baan");
+
+    // Ophalen reservering ID uit de URL
     const urlParams = new URLSearchParams(window.location.search);
-    reservationId = urlParams.get('id');
+    const reserveringId = urlParams.get('id');
 
-    // Functie om de reservering op te halen en in te vullen in het formulier
-    function getReservation() {
-        // Haal de reserveringsgegevens op via een GET-verzoek naar de backend met de reservering ID
-        fetch(`http://localhost:3000/reserveringen/${reservationId}`)
-            .then(response => response.json())
-            .then(reservation => {
-                // Vul het reserveringsformulier met de huidige reserveringsgegevens
-                document.getElementById('email').value = reservation.user_email;
-                document.getElementById('email-hidden').value = reservation.user_email;
-                document.getElementById('sport').value = reservation.sport;
-                if (reservation.sport === 'tennis') {
-                    document.getElementById('tennisbaanLabel').style.display = 'block';
-                    document.getElementById('tennisbaan').style.display = 'block';
-                    document.getElementById('tennisbaan').value = reservation.baan;
-                } else if (reservation.sport === 'padel') {
-                    document.getElementById('padelbaanLabel').style.display = 'block';
-                    document.getElementById('padelbaan').style.display = 'block';
-                    document.getElementById('padelbaan').value = reservation.baan;
-                }
-                document.getElementById('extra-ballen').value = reservation.extra_ballen;
-                document.getElementById('extra-racket').value = reservation.extra_racket;
-                document.getElementById('datum').value = reservation.datum;
-                document.getElementById('tijd').value = reservation.tijd;
-            })
-            .catch(error => {
-                console.error('Er is een fout opgetreden bij het ophalen van reserveringsgegevens:', error);
+    // Fetch de reservering data
+    fetch(`http://localhost:3000/reserveringen/${reserveringId}`)
+        .then(response => response.json())
+        .then(reservering => {
+            // Vul de velden met de opgehaalde data
+            document.getElementById('email').value = reservering.user_email;
+            document.getElementById('email-hidden').value = reservering.user_email;
+            document.getElementById('extra-ballen').value = reservering.extra_ballen;
+            document.getElementById('extra-racket').value = reservering.extra_racket;
+            document.getElementById('datum').value = reservering.datum;
+            document.getElementById('tijd').value = reservering.tijd;
+
+            // Roep updateTijdslots aan met de gereserveerde tijd
+            updateTijdslots(reservering.tijd);
+
+            // Vuur een change event op de sport select om de bijbehorende banen op te halen
+            var event = new Event('change');
+            sportSelect.dispatchEvent(event);
+        })
+        .catch(error => console.error('Fout bij het ophalen van de reservering:', error));
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorMessage.textContent = ''; // Wis eerdere foutmelding
+        successMessage.style.display = 'none'; // Verberg eerdere succesmelding
+
+        const data = {
+            user_email: document.getElementById('email-hidden').value,
+            extra_ballen: parseInt(document.getElementById('extra-ballen').value),
+            extra_racket: parseInt(document.getElementById('extra-racket').value),
+            datum: document.getElementById('datum').value,
+            tijd: document.getElementById('tijd').value
+        };
+
+        try {
+            const response = await fetch(`http://localhost:3000/reserveringen/${reserveringId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
             });
-    }
 
-    // Roep de functie aan om de reservering op te halen en in te vullen
-    getReservation();
-});
+            if (response.ok) {
+                console.log('Reservering succesvol gewijzigd');
+                successMessage.style.display = 'block'; // Toon succesmelding
+            } else {
+                const errorData = await response.json(); // Parseer de foutinformatie als JSON
+                errorMessage.textContent = errorData.message; // Gebruik het berichtveld van de error data
+            }
+        } catch (error) {
+            errorMessage.textContent = 'Er is een fout opgetreden bij het verzenden van de reservering.';
+        }
+    });
 
-// Functie voor het bijwerken van de beschikbare tijdslots op basis van de geselecteerde datum
-document.addEventListener("DOMContentLoaded", function () {
     const selectElement = document.getElementById("tijd");
     const availabilityMessage = document.getElementById("availability-message");
 
@@ -50,11 +74,18 @@ document.addEventListener("DOMContentLoaded", function () {
         "20:00", "21:00", "22:00"
     ];
 
-    function updateTijdslots() {
+    function updateTijdslots(reservedTime) {
         const selectedDate = new Date(document.getElementById("datum").value);
+        const currentDate = new Date();
 
         selectElement.innerHTML = "";
         let availableTijdslots = 0;
+
+        const optionElement = document.createElement("option");
+        optionElement.value = reservedTime;
+        optionElement.textContent = reservedTime;
+        selectElement.appendChild(optionElement);
+        availableTijdslots++;
 
         for (let i = 0; i < tijdslots.length; i++) {
             const [hour, minutes] = tijdslots[i].split(":");
@@ -62,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
             slotDate.setHours(hour);
             slotDate.setMinutes(minutes);
 
-            if (slotDate >= selectedDate) {
+            if (slotDate > currentDate) {
                 const optionElement = document.createElement("option");
                 optionElement.value = tijdslots[i];
                 optionElement.textContent = tijdslots[i];
@@ -78,92 +109,34 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    document.getElementById("datum").addEventListener("change", updateTijdslots);
+    function updateBaanOptions(courts) {
+        const baanSelect = document.getElementById("baan");
 
-    // Stel de huidige datum in bij het laden van de pagina
-    document.getElementById("datum").valueAsDate = new Date();
+        // Reset baanSelect
+        baanSelect.innerHTML = "";
 
-    updateTijdslots();
-});
-
-// Functie voor het tonen van specifieke velden op basis van de geselecteerde sport
-document.addEventListener("DOMContentLoaded", function () {
-    const sportSelect = document.getElementById("sport");
-    const tennisbaanLabel = document.getElementById("tennisbaanLabel");
-    const tennisbaanSelect = document.getElementById("tennisbaan");
-    const padelbaanLabel = document.getElementById("padelbaanLabel");
-    const padelbaanSelect = document.getElementById("padelbaan");
-
-    function handleSportSelection() {
-        const selectedSport = sportSelect.value;
-
-        tennisbaanLabel.style.display = "none";
-        tennisbaanSelect.style.display = "none";
-        tennisbaanSelect.disabled = true;
-        padelbaanLabel.style.display = "none";
-        padelbaanSelect.style.display = "none";
-        padelbaanSelect.disabled = true;
-        tennisbaanSelect.selectedIndex = 0;
-        padelbaanSelect.selectedIndex = 0;
-
-        if (selectedSport === "tennis") {
-            tennisbaanLabel.style.display = "block";
-            tennisbaanSelect.style.display = "block";
-            tennisbaanSelect.disabled = false;
-        } else if (selectedSport === "padel") {
-            padelbaanLabel.style.display = "block";
-            padelbaanSelect.style.display = "block";
-            padelbaanSelect.disabled = false;
+        // Voeg banen toe aan baanSelect
+        for (const court of courts) {
+            const optionElement = document.createElement("option");
+            optionElement.value = court.id;
+            optionElement.textContent = court.id + " " + court.court_type + " " + court.location;
+            baanSelect.appendChild(optionElement);
         }
     }
 
-    sportSelect.addEventListener("change", handleSportSelection);
-});
+    document.getElementById("datum").addEventListener("change", function () {
+        updateTijdslots(document.getElementById('tijd').value);
+    });
 
-// Functie voor het verwerken van het formulier bij het wijzigen van een reservering
-document.addEventListener("DOMContentLoaded", function () {
-    const editForm = document.getElementById('edit-form');
-    const errorMessage = document.getElementById('error-message');
-    const successMessage = document.getElementById('success-message');
-
-    editForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        errorMessage.textContent = ''; // Wis eerdere foutmelding
-        successMessage.style.display = 'none'; // Verberg eerdere succesmelding
-
-        try {
-            const response = await fetch(`http://localhost:3000/reserveringen/${reservationId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: document.getElementById('email-hidden').value,
-                    sport: document.getElementById('sport').value,
-                    baan: document.getElementById('sport').value === 'tennis' ? document.getElementById('tennisbaan').value : document.getElementById('padelbaan').value,
-                    extra_ballen: parseInt(document.getElementById('extra-ballen').value),
-                    extra_racket: parseInt(document.getElementById('extra-racket').value),
-                    datum: document.getElementById('datum').value,
-                    tijd: document.getElementById('tijd').value
-                })
-            });
-
-            if (response.ok) {
-                // Reservering succesvol gewijzigd
-                console.log('Reservering succesvol gewijzigd');
-                successMessage.style.display = 'block'; // Toon succesmelding
-                // Voeg hier eventuele acties toe na een succesvolle wijziging
-
-                // Stuur de gebruiker naar een andere pagina (bijvoorbeeld de reserveringslijst)
-                window.location.href = './planning.html';
-            } else {
-                // Fout bij het wijzigen van de reservering
-                const errorMessage = await response.text();
-                throw new Error(errorMessage);
-            }
-        } catch (error) {
-            // Toon foutmelding
-            errorMessage.textContent = error.message;
+    sportSelect.addEventListener("change", function () {
+        const selectedSport = sportSelect.value;
+        if (selectedSport) {
+            fetch(`http://localhost:3000/courts/bySport?sport=${selectedSport}`)
+                .then(response => response.json())
+                .then(courts => updateBaanOptions(courts))
+                .catch(error => console.error('Fout bij het ophalen van banen:', error));
+        } else {
+            baanSelect.innerHTML = "";
         }
     });
 });

@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getReservations, createReservation, getReservationsByDate, deleteReservation } = require('../controllers/reservations');
-const reservationsController = require('../controllers/reservations');
-const db = require('../database/db');
-
+const {
+    getReservations,
+    createReservation,
+    getReservationsByDate,
+    deleteReservation,
+    getReservationById,
+    updateReservation
+} = require('../controllers/reservations');
 
 // GET-route voor het ophalen van alle reserveringen
 router.get('/', getReservations);
@@ -18,9 +22,9 @@ router.post('/', createReservation);
 router.delete('/:id', deleteReservation);
 
 // Route voor het ophalen van een specifieke reservering
-router.get('/:id', reservationsController.getReservationById);
+router.get('/:id', getReservationById);
 
 // PUT-route voor het bijwerken van een reservering
-router.put('/:id', reservationsController.updateReservation);
+router.put('/:id', updateReservation);
 
 module.exports = router;

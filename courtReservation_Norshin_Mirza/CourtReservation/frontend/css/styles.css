@@ -6,6 +6,8 @@ nav {
     background-color: #333;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 100;
+    font-weight: bold;
+
 }
 
 nav ul {
@@ -124,4 +126,52 @@ footer {
     padding: 10px;
     background-color: #333;
     color: #fff;
+}
+
+.hero {
+    text-align: center;
+    color: white;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 2.5em;
+}
+
+.hero-description {
+    font-size: 1.2em;
+}
+
+.features {
+    background-color: #f8f8f8;
+    padding: 20px;
+    text-align: center;
+}
+
+.features h2 {
+    margin-bottom: 20px;
+}
+
+.feature {
+    margin-bottom: 20px;
+}
+
+.reserveren-btn {
+    background-color: #2f394d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.reserveren-btn:hover {
+    background-color: #3a4b6a;
 }

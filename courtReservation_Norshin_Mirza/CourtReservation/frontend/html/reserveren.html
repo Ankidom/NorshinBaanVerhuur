@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script defer src="../js/loadSports.js"></script>
     <script defer src="../js/reserveren.js"></script>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/reserveren.css">
@@ -40,30 +41,17 @@
     <label for="email">E-mail:</label>
     <input type="email" id="email" name="email" required><br><br>
 
-    <!-- Keuze tussen tennis en padel -->
+    <!-- Keuze tussen de verschillende sporten -->
     <label for="sport">Sport:</label>
     <select id="sport" name="sport" required>
         <option value="">Selecteer een sport</option>
-        <option value="tennis">Tennis</option>
-        <option value="padel">Padel</option>
+        <!-- De sporten zullen dynamisch worden toegevoegd -->
     </select><br>
 
-    <!-- Opties voor tennisbanen -->
-    <label for="tennisbaan" id="tennisbaanLabel" style="display: none;">Tennisbaan:</label>
-    <select id="tennisbaan" name="baan" disabled required style="display: none;">
-        <option value="">Selecteer een tennisbaan</option>
-        <option value="tennisbaan1">Tennisbaan 1</option>
-        <option value="tennisbaan2">Tennisbaan 2</option>
-        <option value="tennisbaan3">Tennisbaan 3</option>
-    </select>
-
-    <!-- Opties voor padelbanen -->
-    <label for="padelbaan" id="padelbaanLabel" style="display: none;">Padelbaan:</label>
-    <select id="padelbaan" name="baan" disabled required style="display: none;">
-        <option value="">Selecteer een padelbaan</option>
-        <option value="padelbaan1">Padelbaan 1</option>
-        <option value="padelbaan2">Padelbaan 2</option>
-        <option value="padelbaan3">Padelbaan 3</option>
+    <!-- Opties voor de banen -->
+    <label for="baan">Baan:</label>
+    <select id="baan" name="baan" required>
+        <!-- De banen zullen dynamisch worden toegevoegd -->
     </select><br>
 
     <!-- Aantal ballen te selecteren -->

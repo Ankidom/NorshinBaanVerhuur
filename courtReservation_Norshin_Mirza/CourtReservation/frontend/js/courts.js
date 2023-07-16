@@ -23,8 +23,13 @@ fetch('http://localhost:3000/courts')
             const deleteCell = document.createElement('td');
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Verwijderen';
+            deleteButton.className = 'delete-button';
             deleteButton.addEventListener('click', () => {
-                deleteCourt(court.id);
+                const confirmDelete = confirm("Weet je zeker dat je deze reservering wilt verwijderen?");
+                if (confirmDelete) {
+                    // Verwijder de baan
+                    deleteCourt(court.id);
+                }
             });
             deleteCell.appendChild(deleteButton);
             row.appendChild(deleteCell);
@@ -32,10 +37,9 @@ fetch('http://localhost:3000/courts')
             const editCell = document.createElement('td');
             const editButton = document.createElement('button');
             editButton.textContent = 'Wijzigen';
+            editButton.className = 'edit-button';
             editButton.addEventListener('click', () => {
-                const newType = prompt('Enter new type');
-                const newLocation = prompt('Enter new location');
-                updateCourt(court.id, newType, newLocation);
+                window.location.href = `./courtsEdit.html?id=${court.id}`;
             });
             editCell.appendChild(editButton);
             row.appendChild(editCell);
