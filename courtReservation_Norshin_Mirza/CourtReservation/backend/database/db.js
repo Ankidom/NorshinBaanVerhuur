@@ -48,9 +48,39 @@ const db = new sqlite3.Database(dbPath, (err) => {
                     CREATE TABLE IF NOT EXISTS courts (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         court_type TEXT NOT NULL,
-                        location TEXT NOT NULL
+                        location_id INTEGER,
+                        FOREIGN KEY (location_id) REFERENCES locations(id)
                     );
                 `;
+
+                // SQL-statements voor het aanmaken van de locaties tabel
+                const createLocationsTable = `
+                    CREATE TABLE IF NOT EXISTS locations (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        location_name TEXT UNIQUE NOT NULL
+                    );
+                `;
+                // Voer het SQL-statement uit om de locaties tabel aan te maken
+                db.run(createLocationsTable, (err) => {
+                    if (err) {
+                        console.error('Fout bij het aanmaken van de tabel voor locaties:', err.message);
+                    } else {
+                        console.log('Tabel voor locaties aangemaakt.');
+
+                        // Hardcoded locaties
+                        const locations = ['Oldenzaal', 'Hengelo', 'Enschede'];
+
+                        // Voeg de hardcoded locaties toe aan de locaties tabel
+                        locations.forEach(location => {
+                            db.run(`INSERT OR IGNORE INTO locations (location_name) VALUES (?)`, [location], (err) => {
+                                if (err) {
+                                    console.error('Fout bij het toevoegen van locatie:', err.message);
+                                }
+                            });
+                        });
+                    }
+                });
+
 
                 // Voer het SQL-statement uit om de banen tabel aan te maken
                 db.run(createCourtsTable, (err) => {

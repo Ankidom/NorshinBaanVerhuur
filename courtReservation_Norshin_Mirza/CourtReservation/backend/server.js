@@ -5,6 +5,7 @@ const sqlite3 = require('sqlite3').verbose();
 const reservationsRouter = require('./routes/reservations');
 const usersRouter = require('./routes/usersRouter');
 const courtsRouter = require('./routes/courts');
+const locationsRouter = require('./routes/locationsRoute');
 const db = require('./database/db');
 
 // Maak een express-applicatie
@@ -88,6 +89,7 @@ app.post('/reserveren', (req, res) => {
 
 
 
+app.use('/locations', locationsRouter);
 
 // Gebruik de reservations-router voor het verwerken van reserveringen
 app.use('/reserveringen', reservationsRouter);

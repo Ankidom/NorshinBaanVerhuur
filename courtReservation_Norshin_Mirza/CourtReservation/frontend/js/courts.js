@@ -17,7 +17,7 @@ fetch('http://localhost:3000/courts')
             row.appendChild(typeCell);
 
             const locationCell = document.createElement('td');
-            locationCell.textContent = court.location;
+            locationCell.textContent = court.location_name;
             row.appendChild(locationCell);
 
             const deleteCell = document.createElement('td');

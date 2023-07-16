@@ -1,7 +1,9 @@
 const db = require('../database/db');
 
 const getCourts = (req, res) => {
-    const query = 'SELECT * FROM courts';
+    const query = '    SELECT courts.id, courts.court_type, locations.location_name \n' +
+        '    FROM courts \n' +
+        '    INNER JOIN locations ON courts.location_id = locations.id';
 
     db.all(query, [], (err, rows) => {
         if (err) {
@@ -29,7 +31,12 @@ const getCourtsByType = (req, res) => {
 const getCourtsBySport = (req, res) => {
     const { sport } = req.query;
 
-    const query = 'SELECT * FROM courts WHERE court_type = ?';
+    const query = `
+        SELECT courts.id, courts.court_type, locations.location_name 
+        FROM courts 
+        INNER JOIN locations ON courts.location_id = locations.id
+        WHERE courts.court_type = ?
+    `;
     const params = [sport];
 
     db.all(query, params, (err, rows) => {
@@ -42,10 +49,14 @@ const getCourtsBySport = (req, res) => {
     });
 };
 
+
 const getCourtById = (req, res) => {
     const { id } = req.params;
 
-    const query = 'SELECT * FROM courts WHERE id = ?';
+    const query = 'SELECT courts.id, courts.court_type, locations.location_name\n' +
+        '        FROM courts\n' +
+        '        INNER JOIN locations ON courts.location_id = locations.id\n' +
+        '        WHERE courts.id = ?';
     const params = [id];
 
     db.get(query, params, (err, row) => {
@@ -63,7 +74,7 @@ const getCourtById = (req, res) => {
 const createCourt = (req, res) => {
     const { type, location } = req.body;
 
-    const insertCourtQuery = 'INSERT INTO courts (court_type, location) VALUES (?, ?)';
+    const insertCourtQuery = 'INSERT INTO courts (court_type, location_id) VALUES (?, ?)';
 
     db.run(insertCourtQuery, [type, location], function (err) {
         if (err) {
@@ -80,7 +91,7 @@ const updateCourt = (req, res) => {
     const { id } = req.params;
     const { type, location } = req.body;
 
-    const updateCourtQuery = 'UPDATE courts SET court_type = ?, location = ? WHERE id = ?';
+    const updateCourtQuery = 'UPDATE courts SET court_type = ?, location_id = ? WHERE id = ?';
 
     db.run(updateCourtQuery, [type, location, id], function (err) {
         if (err) {

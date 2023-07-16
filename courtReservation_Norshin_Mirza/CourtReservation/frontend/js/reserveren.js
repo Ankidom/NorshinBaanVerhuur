@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
         for (const court of courts) {
             const optionElement = document.createElement("option");
             optionElement.value = court.id;
-            optionElement.textContent = court.id + " " + court.court_type + " " + court.location;
+            optionElement.textContent = court.id + " " + court.court_type + " " + court.location_name;
             baanSelect.appendChild(optionElement);
         }
     }
